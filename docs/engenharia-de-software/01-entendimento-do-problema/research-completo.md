@@ -255,4 +255,4 @@ Nenhum sistema nacional integra **prevenção + resposta + voluntariado**. O Bra
 
 ---
 
-_Compilado por Kairos 🔭 | Dados sem ação são curiosidade. Dados com ação são poder._
+_Dados sem ação são curiosidade. Dados com ação são poder._

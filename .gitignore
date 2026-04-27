@@ -1,6 +1,5 @@
 __pycache__/
 *.pyc
-ibm-credentials.md
 
 # Ignore node_modules and build folders
 node_modules/
@@ -10,9 +9,8 @@ out/
 build/
 
 # Ignore environment files
-.env
-.env.local
-.env.*.local
+**/*.env
+**/.env*
 
 # Ignore IDE settings
 .idea/

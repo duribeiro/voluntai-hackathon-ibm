@@ -206,12 +206,10 @@ Tarefas:
 - Subir API pública.
 - Atualizar `servers.url` no OpenAPI com URL real.
 - Importar OpenAPI como tools no watsonx Orchestrate.
-- Criar/ajustar agentes:
-  - Orchestrator;
-  - Cadastro Agent;
-  - Matching Agent;
-  - Notificação Agent;
-  - Radar/Crisis Agent se couber.
+- [ ] Acessar console do IBM watsonx Orchestrate.
+- [ ] Criar o Orchestrator (Agente Principal).
+- [ ] Criar/ajustar agentes (RegistryAgent, MatchAgent, NotifyAgent, RadarAgent).
+- [ ] Escrever as Instructions (Prompts) rigorosas dos agentes na pasta `orchestrate/instructions/`.
 - Testar no chat do Orchestrate:
   - cadastrar voluntário;
   - cadastrar necessidade;
@@ -278,31 +276,31 @@ Motivo: primeiro construir o braço operacional dos agentes; depois conectar Orc
 
 ### Cena 1 — Voluntário
 
-Usuário diz ao agente:
+Usuário diz ao Orchestrator (SPOC):
 
 > “Quero ajudar. Sou técnico de enfermagem em Canoas e tenho disponibilidade hoje.”
 
-Agente coleta dados faltantes e chama `volunteer_create`.
+O Orchestrator aciona o RegistryAgent, que coleta dados faltantes e chama `volunteer_create`.
 
 ### Cena 2 — Instituição
 
-Instituição diz:
+Instituição diz ao Orchestrator (SPOC):
 
 > “Estamos com abrigo lotado em Canoas e precisamos de apoio de saúde para famílias desalojadas.”
 
-Agente chama `urgency_classify`, depois `need_create`.
+O Orchestrator aciona o RegistryAgent, que chama `urgency_classify`, depois `need_create`.
 
 ### Cena 3 — Matching
 
-Matching Agent chama `need_match` e retorna voluntários compatíveis.
+O Orchestrator aciona o MatchAgent, que chama `need_match` e retorna voluntários compatíveis.
 
 ### Cena 4 — Notificação
 
-Notificação Agent chama `notification_send` com mensagem humana e contextual.
+O Orchestrator aciona o NotifyAgent, que chama `notification_send` com mensagem humana e contextual.
 
 ### Cena 5 — Radar
 
-Radar Agent processa alerta `cemaden_mock`, cria nova necessidade e mostra rastreabilidade.
+O Orchestrator aciona o RadarAgent, que processa alerta `cemaden_mock`, cria nova necessidade e mostra rastreabilidade.
 
 ### Cena 6 — Dashboard
 

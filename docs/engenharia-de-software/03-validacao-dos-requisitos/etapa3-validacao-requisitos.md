@@ -48,7 +48,7 @@ O Radar externo e o painel do doador são diferenciais fortes, mas devem ser tra
 7. Notificar voluntário compatível no painel.
 8. Exibir painel simples com gargalos e métricas.
 9. Mostrar Radar simulado criando uma necessidade a partir de alerta externo mockado.
-10. Orquestrar pelo IBM watsonx Orchestrate ao menos um fluxo real ou semi-real.
+10. Orquestrar pelo IBM watsonx Orchestrate ao menos um fluxo real ou semi-real, comprovando o Orchestrator como Ponto Único de Contato (SPOC) para o usuário.
 
 ---
 

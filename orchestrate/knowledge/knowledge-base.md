@@ -228,4 +228,4 @@ Quando o usuario perguntar sobre:
 ---
 
 _Base de conhecimento para VoluntAI - Hackathon UNASP + IBM 2026_
-_Criado por Aria - 2026-04-24_
+_Criado em - 2026-04-24_

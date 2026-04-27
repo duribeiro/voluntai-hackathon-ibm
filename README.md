@@ -88,7 +88,7 @@ hackathon-ibm-2026/
 - [x] 21 requisitos funcionais documentados
 - [x] 10 requisitos não funcionais documentados
 - [x] Validação MVP concluída: manter / simplificar / simular / visão futura
-- [x] 3 agentes principais definidos (Match, Need, Radar)
+- [x] 5 agentes principais definidos (Orchestrator, RegistryAgent, MatchAgent, NotifyAgent, RadarAgent)
 - [x] Stack definida: Next.js + Supabase + watsonx Orchestrate + Vercel
 - [x] Dados mockados planejados (20 voluntários + 5-8 instituições + 8-12 necessidades)
 

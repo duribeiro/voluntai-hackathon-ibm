@@ -120,9 +120,19 @@ Isso ajuda pitch, confiança e tomada de decisão.
 
 ### 4.6 Orquestração multiagente
 
-O Orchestrate permite agentes colaboradores. O agente principal pode rotear para Cadastro, Matching, Notificação/Radar.
+O Orchestrate permite agentes colaboradores. O Orchestrator pode rotear para RegistryAgent, MatchAgent, NotifyAgent e RadarAgent.
 
 Isso justifica o nome “Orchestrate”: não é só endpoint; é coordenação de trabalho entre especialistas.
+
+### 4.7 Orchestrator como Ponto Único de Contato (SPOC)
+
+O usuário final (voluntário ou instituição) **nunca** fala diretamente com os agentes especialistas. Ele interage 100% do tempo com o **Orchestrator**. É o Orchestrator que atua como o "concierge" em linguagem natural, entende a intenção e delega a execução em background para o RegistryAgent, MatchAgent, NotifyAgent e RadarAgent, devolvendo a resposta consolidada de forma humana para o usuário.
+
+### 4.8 A Importância das Instructions (Prompts)
+
+Para que a orquestração e o SPOC funcionem perfeitamente (como evidenciado no exemplo `weather_agent`), não basta expor a API. Cada agente precisa de **instruções rigorosas (prompts)** detalhando exatamente *quando* usar uma ferramenta, *como* interpretar os dados e *como* formatar a resposta para o Orchestrator. 
+
+Essas diretrizes de comportamento são o núcleo da inteligência do agente e estão versionadas como código na pasta `orchestrate/instructions/`. A eficiência do sistema depende dessas regras estarem claras e bem definidas.
 
 ---
 

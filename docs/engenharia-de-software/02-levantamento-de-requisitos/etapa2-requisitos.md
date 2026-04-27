@@ -170,7 +170,7 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 - Nível de urgência (crítica/alta/média/baixa)
 - Local (cidade/UF ou endereço)
 - Data/hora
-**Processamento:** O sistema registra a necessidade, aciona o agente de matching para identificar voluntários compatíveis e, se urgência for crítica, dispara o fluxo de orquestração (notificação imediata).
+**Processamento:** O sistema registra a necessidade, aciona o MatchAgent para identificar voluntários compatíveis e, se urgência for crítica, dispara o fluxo de orquestração (notificação imediata).
 **Saídas:** Necessidade salva, matches identificados, notificações disparadas (se urgente).
 **Prioridade:** Alta
 **Fonte:** Eduardo Ribeiro / Edital do Hackathon
@@ -261,7 +261,7 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 **Descrição:** Quando uma necessidade crítica for cadastrada ou detectada por sinais externos, o sistema deve disparar automaticamente fluxo coordenado: buscar voluntários compatíveis, notificar e acompanhar.
 **Objetivo:** Garantir resposta rápida a necessidades urgentes sem depender de um coordenador humano como gargalo operacional.
 **Entradas:** Necessidade com urgência "crítica" cadastrada por instituição ou detectada por sinais externos.
-**Processamento:** O IBM watsonx Orchestrate atua como núcleo coordenador, aciona o agente de matching para buscar voluntários compatíveis e, em paralelo, aciona o agente de notificação para comunicar os voluntários identificados.
+**Processamento:** O IBM watsonx Orchestrate atua como núcleo coordenador, aciona o MatchAgent para buscar voluntários compatíveis e, em paralelo, aciona o NotifyAgent para comunicar os voluntários identificados.
 **Saídas:** Voluntários notificados, necessidade em status "em acompanhamento".
 **Prioridade:** Alta
 **Fonte:** Eduardo Ribeiro / Edital do Hackathon
@@ -297,7 +297,7 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 
 #### 6.1.13 Requisito: RF13
 **Nome:** Comunicação empática em linguagem natural
-**Descrição:** O agente de notificação deve se comunicar em linguagem natural humana, contextualizada e empática, não genérica.
+**Descrição:** O NotifyAgent deve se comunicar em linguagem natural humana, contextualizada e empática, não genérica.
 **Objetivo:** Garantir que as mensagens geradas pela IA sejam humanas, não robóticas.
 **Entradas:** Contexto da notificação (tipo, voluntário, necessidade, urgência).
 **Processamento:** O agente gera mensagem personalizada considerando o contexto, o perfil do destinatário e o tom adequado (solidário em crises, informativo em rotina).
@@ -365,7 +365,7 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 **Descrição:** O sistema deve capturar alertas vindos de APIs públicas/governamentais e do X/Twitter via RapidAPI.
 **Objetivo:** Reduzir reatividade do sistema, permitindo que sinais externos alimentem a operação antes ou além do cadastro manual das instituições.
 **Entradas:** Payloads/textos vindos de fontes externas (ex: Inmet, Cemaden, GDACS, X/Twitter).
-**Processamento:** O Agente Radar ou backend registra o alerta bruto com fonte, horário, texto e localização estimada.
+**Processamento:** O RadarAgent ou backend registra o alerta bruto com fonte, horário, texto e localização estimada.
 **Saídas:** Alerta externo armazenado na tabela `external_alerts`.
 **Prioridade:** Alta
 **Fonte:** Eduardo Ribeiro / Research do Hackathon
@@ -378,7 +378,7 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 **Descrição:** O sistema deve agrupar múltiplos sinais externos semelhantes e validar automaticamente possíveis necessidades por proximidade, evento e volume de menções.
 **Objetivo:** Usar inteligência coletiva baseada em dados para reduzir falso positivo e priorizar eventos relevantes sem depender de aprovação humana centralizada.
 **Entradas:** Alertas externos brutos, localização, tipo de evento, volume de menções e dados oficiais disponíveis.
-**Processamento:** O Agente Radar identifica clusters de alertas similares, classifica urgência e decide se o conjunto representa uma necessidade acionável.
+**Processamento:** O RadarAgent identifica clusters de alertas similares, classifica urgência e decide se o conjunto representa uma necessidade acionável.
 **Saídas:** Cluster validado ou descartado, com justificativa de IA.
 **Prioridade:** Alta
 **Fonte:** Eduardo Ribeiro / Research do Hackathon
@@ -388,9 +388,9 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 
 #### 6.1.20 Requisito: RF20
 **Nome:** Conversão de alerta validado em necessidade acionável
-**Descrição:** O sistema deve transformar alertas validados pelo Agente Radar em necessidades operacionais para matching e mobilização.
+**Descrição:** O sistema deve transformar alertas validados pelo RadarAgent em necessidades operacionais para matching e mobilização.
 **Objetivo:** Permitir que demandas surjam também de dados externos, não apenas de formulários preenchidos por instituições.
-**Entradas:** Cluster validado pelo Agente Radar.
+**Entradas:** Cluster validado pelo RadarAgent.
 **Processamento:** O sistema cria uma necessidade com título, descrição, local, urgência, tipo de habilidade/recurso e status inicial.
 **Saídas:** Nova necessidade acionável no fluxo de matching.
 **Prioridade:** Alta
@@ -401,14 +401,14 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 
 #### 6.1.21 Requisito: RF21
 **Nome:** Notificação de instituições próximas por alerta externo
-**Descrição:** O sistema deve identificar instituições cadastradas próximas a uma necessidade detectada pelo Radar e notificá-las para ciência, apoio ou tomada de responsabilidade operacional.
+**Descrição:** O sistema deve identificar instituições cadastradas próximas a uma necessidade detectada pelo RadarAgent e notificá-las para ciência, apoio ou tomada de responsabilidade operacional.
 **Objetivo:** Permitir que instituições locais sejam acionadas quando a necessidade não nasce de um cadastro manual, mas de sinais externos validados.
-**Entradas:** Necessidade validada pelo Radar, localização e base de instituições cadastradas.
+**Entradas:** Necessidade validada pelo RadarAgent, localização e base de instituições cadastradas.
 **Processamento:** O sistema cruza localização/tipo de crise com instituições próximas e gera notificação contextualizada.
 **Saídas:** Instituições próximas notificadas sobre a necessidade externa.
 **Prioridade:** Média
 **Fonte:** Eduardo Ribeiro / Refinamento de escopo
-**Critério de aceitação:** O requisito será atendido quando uma necessidade criada pelo Radar notificar ao menos uma instituição compatível/próxima, quando houver instituição cadastrada na região.
+**Critério de aceitação:** O requisito será atendido quando uma necessidade criada pelo RadarAgent notificar ao menos uma instituição compatível/próxima, quando houver instituição cadastrada na região.
 
 ---
 
@@ -486,7 +486,7 @@ Durante o levantamento, foram identificadas tensões entre escopo ideal e viabil
 
 #### 6.2.8 Requisito: RNF08
 **Nome:** Integração IBM watsonx Orchestrate
-**Descrição:** O watsonx Orchestrate deve ser o núcleo obrigatório de coordenação do sistema, assumindo a orquestração operacional via agentes, sem coordenador humano como requisito central.
+**Descrição:** O watsonx Orchestrate deve ser o núcleo obrigatório de coordenação do sistema, assumindo a orquestração operacional via agentes, sem coordenador humano como requisito central. O Orchestrator deve atuar como Single Point of Contact (SPOC). O usuário final nunca interage diretamente com os agentes especialistas (RegistryAgent, MatchAgent, etc.), mas sempre com o Orchestrator principal, que centraliza o atendimento e delega as tarefas em background.
 **Objetivo:** Atender ao requisito obrigatório do edital e demonstrar IA agentic como coordenadora real do fluxo.
 **Prioridade:** Alta
 **Fonte:** Edital do Hackathon
