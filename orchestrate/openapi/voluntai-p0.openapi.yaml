@@ -7,8 +7,8 @@ info:
     Esta versão P0 usa dados mockados/controlados e prova o fluxo agentic: cadastro,
     necessidade, classificação de urgência, matching, notificação e radar simulado.
 servers:
-  - url: https://api.voluntai.local/api
-    description: Placeholder da API pública da PoC. Substituir pela URL real do deploy mantendo o sufixo /api do Next.js.
+  - url: https://voluntai-hackathon-ibm.vercel.app/api
+    description: API pública da PoC VoluntAI publicada na Vercel.
 paths:
   /health:
     get:
