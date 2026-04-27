@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+*.log
 
 # Ignore node_modules and build folders
 node_modules/

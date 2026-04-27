@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { needs, classifyUrgency } from '../../../lib/data'
+import { classifyUrgency, toApiUrgency } from '../../../lib/data'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   if (req.method !== 'POST') {
@@ -16,8 +16,7 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { urgency, justification } = classifyUrgency(description)
   
   res.status(200).json({
-    description,
-    urgency,
+    urgency_level: toApiUrgency(urgency),
     justification,
     confidence: urgency === 'critical' ? 0.95 : urgency === 'high' ? 0.85 : 0.70
   })

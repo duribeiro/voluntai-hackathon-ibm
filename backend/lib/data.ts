@@ -5,11 +5,13 @@ export interface Volunteer {
   id: string
   name: string
   email: string
+  cpf?: string
   phone?: string
   skills: string[]
   city: string
   state: string
   availability: 'immediate' | 'today' | 'this_week' | 'weekends'
+  cnh_type?: string
   created_at: string
 }
 
@@ -790,6 +792,45 @@ export function calculateMatchScore(volunteer: Volunteer, need: Need): number {
   else if (volunteer.availability === 'this_week') score += 10
   
   return score
+}
+
+export function toApiAvailability(availability: Volunteer['availability']): 'integral' | 'parcial' | 'fim_de_semana' {
+  if (availability === 'immediate') return 'integral'
+  if (availability === 'weekends') return 'fim_de_semana'
+  return 'parcial'
+}
+
+export function fromApiAvailability(availability: string): Volunteer['availability'] {
+  if (availability === 'integral') return 'immediate'
+  if (availability === 'fim_de_semana') return 'weekends'
+  if (availability === 'immediate' || availability === 'today' || availability === 'this_week' || availability === 'weekends') {
+    return availability
+  }
+  return 'today'
+}
+
+export function toApiUrgency(urgency: Need['urgency']): 'critica' | 'alta' | 'media' | 'baixa' {
+  if (urgency === 'critical') return 'critica'
+  if (urgency === 'high') return 'alta'
+  if (urgency === 'medium') return 'media'
+  return 'baixa'
+}
+
+export function fromApiUrgency(urgency: string): Need['urgency'] {
+  if (urgency === 'critica') return 'critical'
+  if (urgency === 'alta') return 'high'
+  if (urgency === 'media') return 'medium'
+  if (urgency === 'baixa') return 'low'
+  if (urgency === 'critical' || urgency === 'high' || urgency === 'medium' || urgency === 'low') {
+    return urgency
+  }
+  return 'medium'
+}
+
+export function toApiNeedStatus(status: Need['status']): 'aberta' | 'em_matching' | 'notificada' | 'em_atendimento' | 'resolvida' {
+  if (status === 'open') return 'aberta'
+  if (status === 'closed') return 'resolvida'
+  return 'em_atendimento'
 }
 
 export function classifyUrgency(description: string): { urgency: Need['urgency'], justification: string } {

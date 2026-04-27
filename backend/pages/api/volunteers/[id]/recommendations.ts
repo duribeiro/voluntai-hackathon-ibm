@@ -1,5 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import { volunteers, needs, calculateMatchScore } from '../../../../lib/data'
+import { volunteers, needs, calculateMatchScore, toApiUrgency } from '../../../../lib/data'
 
 export default function handler(req: NextApiRequest, res: NextApiResponse) {
   const { id } = req.query
@@ -24,14 +24,15 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
     }))
     .filter(m => m.score > 0)
     .sort((a, b) => b.score - a.score)
-    .slice(0, 3)
+    .slice(0, Number(req.query.limit || 3))
     .map(m => ({
       need_id: m.need.id,
+      title: m.need.description.split('.')[0],
       description: m.need.description,
-      urgency: m.need.urgency,
+      urgency_level: toApiUrgency(m.need.urgency),
       city: m.need.city,
       required_skills: m.need.required_skills,
-      score: m.score,
+      score: m.score / 100,
       reason: `Compatibilidade de ${m.score}% baseada em: ${m.need.required_skills.filter(s => 
         volunteer.skills.some(vs => vs.toLowerCase() === s.toLowerCase())
       ).join(', ')}`
@@ -39,7 +40,6 @@ export default function handler(req: NextApiRequest, res: NextApiResponse) {
   
   res.status(200).json({
     volunteer_id: volunteer.id,
-    volunteer_name: volunteer.name,
     recommendations: matches
   })
 }
