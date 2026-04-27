@@ -21,7 +21,3 @@ build/
 .DS_Store
 Thumbs.db
 
-# Ignore package locks
-package-lock.json
-yarn.lock
-pnpm-lock.yaml
