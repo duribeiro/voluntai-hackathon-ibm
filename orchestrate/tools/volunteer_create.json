@@ -1,0 +1,44 @@
+{
+  "name": "volunteer_create",
+  "description": "Registers a new volunteer in the VoluntAI platform. Use this tool when a user wants to sign up to help.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "full_name": {
+        "type": "string",
+        "description": "Full name of the volunteer"
+      },
+      "cpf": {
+        "type": "string",
+        "description": "CPF document number of the volunteer"
+      },
+      "phone": {
+        "type": "string",
+        "description": "Phone or WhatsApp number"
+      },
+      "city": {
+        "type": "string",
+        "description": "City where the volunteer resides"
+      },
+      "state": {
+        "type": "string",
+        "description": "Two-letter state abbreviation (e.g., RS, SP)"
+      },
+      "skills": {
+        "type": "array",
+        "items": { "type": "string" },
+        "description": "List of skills the volunteer possesses (e.g., logistica, saude, motorista, tech)"
+      },
+      "availability": {
+        "type": "string",
+        "enum": ["integral", "parcial", "fim_de_semana"],
+        "description": "Volunteer's availability"
+      },
+      "cnh_type": {
+        "type": "string",
+        "description": "Driver's license type, if applicable (e.g., A, B, C, D, E)"
+      }
+    },
+    "required": ["full_name", "cpf", "phone", "city", "state", "skills", "availability"]
+  }
+}

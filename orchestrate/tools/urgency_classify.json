@@ -1,0 +1,14 @@
+{
+  "name": "urgency_classify",
+  "description": "Uses AI to classify the urgency level of a reported need or external alert based on its text description.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "description": {
+        "type": "string",
+        "description": "The text description of the situation to classify"
+      }
+    },
+    "required": ["description"]
+  }
+}

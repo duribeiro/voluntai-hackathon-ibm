@@ -1,0 +1,43 @@
+{
+  "name": "need_create",
+  "description": "Registers a new need/demand for volunteers from an institution. Use this tool when an institution reports a problem requiring help.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string",
+        "description": "Short title describing the need"
+      },
+      "description": {
+        "type": "string",
+        "description": "Detailed description of what is needed"
+      },
+      "institution_id": {
+        "type": "string",
+        "description": "UUID of the requesting institution"
+      },
+      "required_skill": {
+        "type": "string",
+        "description": "The primary skill required to fulfill this need (e.g., saude, motorista, logistica)"
+      },
+      "volunteers_needed": {
+        "type": "integer",
+        "description": "Number of volunteers required"
+      },
+      "urgency_level": {
+        "type": "string",
+        "enum": ["critica", "alta", "media", "baixa"],
+        "description": "Urgency classification"
+      },
+      "location_city": {
+        "type": "string",
+        "description": "City where the help is needed"
+      },
+      "location_state": {
+        "type": "string",
+        "description": "State abbreviation (e.g., RS, SP)"
+      }
+    },
+    "required": ["title", "description", "institution_id", "required_skill", "volunteers_needed", "urgency_level", "location_city", "location_state"]
+  }
+}

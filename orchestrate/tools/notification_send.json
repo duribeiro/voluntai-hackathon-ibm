@@ -1,0 +1,51 @@
+{
+  "name": "notification_send",
+  "description": "Envia notificação empática para um usuário (voluntário ou instituição)",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "user_type": {
+        "type": "string",
+        "enum": ["volunteer", "institution", "coordinator"],
+        "description": "Tipo de usuário"
+      },
+      "user_id": {
+        "type": "string",
+        "description": "ID do usuário"
+      },
+      "type": {
+        "type": "string",
+        "enum": ["match_suggested", "match_accepted", "match_declined", "urgent_need", "bottleneck", "welcome"],
+        "description": "Tipo de notificação"
+      },
+      "title": {
+        "type": "string",
+        "description": "Título da notificação"
+      },
+      "message": {
+        "type": "string",
+        "description": "Mensagem empática personalizada"
+      }
+    },
+    "required": ["user_type", "user_id", "type", "title", "message"]
+  },
+  "templates": {
+    "match_suggested": {
+      "volunteer": "Olá {name}! Encontramos uma oportunidade que combina com você: {need_title} em {location}. Sua ajuda pode fazer a diferença!",
+      "institution": "{volunteer_name} foi sugerido para sua necessidade {need_title}. Aguardando confirmação."
+    },
+    "welcome": {
+      "volunteer": "Bem-vindo(a) à VoluntAI, {name}! Você agora faz parte da rede de voluntários prontos para fazer a diferença em momentos de crise."
+    },
+    "urgent_need": {
+      "volunteer": "🚨 URGENTE: {need_title} precisa de voluntários com suas habilidades em {location}. Você pode ajudar?"
+    }
+  },
+  "endpoint": {
+    "method": "POST",
+    "url": "/notifications",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

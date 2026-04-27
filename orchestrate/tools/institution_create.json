@@ -1,0 +1,46 @@
+{
+  "name": "institution_create",
+  "description": "Cria uma nova instituição na plataforma VoluntAI",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "name": {
+        "type": "string",
+        "description": "Nome da instituição"
+      },
+      "type": {
+        "type": "string",
+        "enum": ["ONG", "defesa_civil", "igreja", "prefeitura", "hospital", "outro"],
+        "description": "Tipo de instituição"
+      },
+      "city": {
+        "type": "string",
+        "description": "Cidade"
+      },
+      "state": {
+        "type": "string",
+        "description": "Estado (UF)"
+      },
+      "email": {
+        "type": "string",
+        "description": "E-mail de contato"
+      },
+      "phone": {
+        "type": "string",
+        "description": "Telefone com DDD"
+      },
+      "responsible": {
+        "type": "string",
+        "description": "Nome do responsável"
+      }
+    },
+    "required": ["name", "type", "city", "state", "email", "phone", "responsible"]
+  },
+  "endpoint": {
+    "method": "POST",
+    "url": "/institutions",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

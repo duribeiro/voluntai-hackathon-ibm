@@ -1,0 +1,14 @@
+{
+  "name": "need_match",
+  "description": "Finds compatible volunteers for a specific need based on skills, location, and availability.",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "need_id": {
+        "type": "string",
+        "description": "UUID of the need to find matches for"
+      }
+    },
+    "required": ["need_id"]
+  }
+}

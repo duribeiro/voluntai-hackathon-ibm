@@ -1,0 +1,26 @@
+{
+  "name": "volunteer_recommend",
+  "description": "Retorna recomendações de necessidades compatíveis para um voluntário",
+  "parameters": {
+    "type": "object",
+    "properties": {
+      "volunteer_id": {
+        "type": "string",
+        "description": "ID do voluntário"
+      },
+      "limit": {
+        "type": "integer",
+        "default": 3,
+        "description": "Número de recomendações a retornar"
+      }
+    },
+    "required": ["volunteer_id"]
+  },
+  "endpoint": {
+    "method": "GET",
+    "url": "/volunteers/{volunteer_id}/recommendations",
+    "headers": {
+      "Content-Type": "application/json"
+    }
+  }
+}

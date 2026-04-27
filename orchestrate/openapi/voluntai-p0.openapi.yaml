@@ -1,0 +1,635 @@
+openapi: 3.0.3
+info:
+  title: VoluntAI P0 Agent Tools API
+  version: 0.1.0
+  description: >-
+    API mínima da PoC VoluntAI para ser chamada por agentes do IBM watsonx Orchestrate.
+    Esta versão P0 usa dados mockados/controlados e prova o fluxo agentic: cadastro,
+    necessidade, classificação de urgência, matching, notificação e radar simulado.
+servers:
+  - url: https://api.voluntai.local
+    description: Placeholder da API pública da PoC. Substituir pela URL real do deploy.
+paths:
+  /health:
+    get:
+      operationId: health_check
+      summary: Verifica se a API VoluntAI está online
+      description: Use esta tool para validar se a API da PoC está acessível antes de executar fluxos críticos.
+      responses:
+        '200':
+          description: API online
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/HealthResponse'
+  /volunteers:
+    post:
+      operationId: volunteer_create
+      summary: Cadastra um novo voluntário
+      description: >-
+        Use esta tool quando uma pessoa quiser se cadastrar como voluntária. O agente deve coletar
+        dados essenciais de forma conversacional, confirmar o resumo com o usuário e então chamar esta operação.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/VolunteerCreateRequest'
+      responses:
+        '201':
+          description: Voluntário cadastrado
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/VolunteerResponse'
+  /institutions:
+    post:
+      operationId: institution_create
+      summary: Cadastra uma nova instituição
+      description: >-
+        Use esta tool quando uma ONG, igreja, prefeitura, Defesa Civil, hospital ou organização parceira
+        quiser registrar sua instituição para criar necessidades de voluntariado.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/InstitutionCreateRequest'
+      responses:
+        '201':
+          description: Instituição cadastrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/InstitutionResponse'
+  /needs:
+    post:
+      operationId: need_create
+      summary: Cadastra uma necessidade de voluntariado
+      description: >-
+        Use esta tool quando uma instituição reportar uma demanda real de ajuda. Se a urgência ainda
+        não estiver definida, o agente deve chamar urgency_classify antes de criar a necessidade.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NeedCreateRequest'
+      responses:
+        '201':
+          description: Necessidade cadastrada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NeedResponse'
+    get:
+      operationId: need_list
+      summary: Lista necessidades abertas
+      description: Use esta tool para consultar necessidades abertas, filtrando por cidade, estado, urgência ou status.
+      parameters:
+        - in: query
+          name: city
+          schema:
+            type: string
+          description: Cidade da necessidade
+        - in: query
+          name: state
+          schema:
+            type: string
+          description: UF da necessidade
+        - in: query
+          name: urgency_level
+          schema:
+            $ref: '#/components/schemas/UrgencyLevel'
+          description: Nível de urgência
+        - in: query
+          name: status
+          schema:
+            $ref: '#/components/schemas/NeedStatus'
+          description: Status da necessidade
+      responses:
+        '200':
+          description: Lista de necessidades
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: '#/components/schemas/NeedResponse'
+  /needs/classify-urgency:
+    post:
+      operationId: urgency_classify
+      summary: Classifica a urgência de uma necessidade
+      description: >-
+        Use esta tool antes de cadastrar uma necessidade quando a urgência não estiver clara.
+        A resposta deve justificar a classificação em linguagem simples.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UrgencyClassifyRequest'
+      responses:
+        '200':
+          description: Urgência classificada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/UrgencyClassifyResponse'
+  /needs/{need_id}/match:
+    post:
+      operationId: need_match
+      summary: Busca voluntários compatíveis com uma necessidade
+      description: >-
+        Use esta tool depois que uma necessidade for criada ou detectada pelo Radar. O matching P0
+        considera habilidade principal, cidade/UF, disponibilidade e urgência.
+      parameters:
+        - in: path
+          name: need_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID da necessidade
+      requestBody:
+        required: false
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                limit:
+                  type: integer
+                  minimum: 1
+                  maximum: 20
+                  default: 5
+                  description: Quantidade máxima de voluntários compatíveis
+      responses:
+        '200':
+          description: Matches encontrados
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/MatchResponse'
+  /volunteers/{volunteer_id}/recommendations:
+    get:
+      operationId: volunteer_recommend
+      summary: Recomenda necessidades para um voluntário
+      description: >-
+        Use esta tool quando um voluntário perguntar onde pode ajudar agora. Retorna as melhores
+        necessidades abertas com justificativa de compatibilidade.
+      parameters:
+        - in: path
+          name: volunteer_id
+          required: true
+          schema:
+            type: string
+            format: uuid
+          description: ID do voluntário
+        - in: query
+          name: limit
+          schema:
+            type: integer
+            minimum: 1
+            maximum: 10
+            default: 3
+          description: Quantidade máxima de recomendações
+      responses:
+        '200':
+          description: Recomendações para o voluntário
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RecommendationResponse'
+  /notifications:
+    post:
+      operationId: notification_send
+      summary: Cria uma notificação in-app
+      description: >-
+        Use esta tool para registrar uma mensagem empática e contextualizada para voluntários ou instituições.
+        No P0, a notificação é in-app/mockada; WhatsApp real fica fora do caminho crítico.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/NotificationCreateRequest'
+      responses:
+        '201':
+          description: Notificação criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/NotificationResponse'
+  /radar/mock-alerts/process:
+    post:
+      operationId: radar_mock_alert_process
+      summary: Processa alerta externo simulado e cria necessidade acionável
+      description: >-
+        Use esta tool para demonstrar o Radar no P0. Ela simula alertas externos inspirados em fontes como
+        Inmet, Cemaden, GDACS ou X/Twitter, registra rastreabilidade e pode converter o alerta em necessidade.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/RadarMockAlertRequest'
+      responses:
+        '201':
+          description: Alerta processado e possível necessidade criada
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/RadarMockAlertResponse'
+  /dashboard/summary:
+    get:
+      operationId: dashboard_summary
+      summary: Retorna resumo operacional da PoC
+      description: Use esta tool para alimentar o painel simples com totais, gargalos, necessidades críticas e métricas de impacto.
+      responses:
+        '200':
+          description: Resumo do dashboard
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/DashboardSummaryResponse'
+components:
+  schemas:
+    HealthResponse:
+      type: object
+      required: [status, timestamp]
+      properties:
+        status:
+          type: string
+          example: ok
+        timestamp:
+          type: string
+          format: date-time
+    UrgencyLevel:
+      type: string
+      enum: [critica, alta, media, baixa]
+    NeedStatus:
+      type: string
+      enum: [aberta, em_matching, notificada, em_atendimento, resolvida]
+    Availability:
+      type: string
+      enum: [integral, parcial, fim_de_semana]
+    VolunteerCreateRequest:
+      type: object
+      required: [full_name, cpf, phone, city, state, skills, availability]
+      properties:
+        full_name:
+          type: string
+          example: Maria Oliveira
+        cpf:
+          type: string
+          example: '00000000000'
+        phone:
+          type: string
+          example: '+5551999999999'
+        city:
+          type: string
+          example: Canoas
+        state:
+          type: string
+          example: RS
+        skills:
+          type: array
+          items:
+            type: string
+          example: [saude, enfermagem, primeiros_socorros]
+        availability:
+          $ref: '#/components/schemas/Availability'
+        cnh_type:
+          type: string
+          nullable: true
+          example: B
+    VolunteerResponse:
+      type: object
+      required: [id, full_name, city, state, skills, availability, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        availability:
+          $ref: '#/components/schemas/Availability'
+        created_at:
+          type: string
+          format: date-time
+    InstitutionCreateRequest:
+      type: object
+      required: [name, type, city, state, responsible_name, phone]
+      properties:
+        name:
+          type: string
+          example: Defesa Civil de Canoas
+        type:
+          type: string
+          example: Defesa Civil
+        cnpj:
+          type: string
+          nullable: true
+          example: '00000000000100'
+        city:
+          type: string
+          example: Canoas
+        state:
+          type: string
+          example: RS
+        responsible_name:
+          type: string
+          example: João Silva
+        phone:
+          type: string
+          example: '+5551988888888'
+    InstitutionResponse:
+      type: object
+      required: [id, name, type, city, state, responsible_name, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        name:
+          type: string
+        type:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        responsible_name:
+          type: string
+        created_at:
+          type: string
+          format: date-time
+    NeedCreateRequest:
+      type: object
+      required: [title, description, institution_id, required_skill, volunteers_needed, urgency_level, location_city, location_state]
+      properties:
+        title:
+          type: string
+          example: Apoio em abrigo com famílias desalojadas
+        description:
+          type: string
+          example: Abrigo recebeu famílias desalojadas e precisa de apoio de saúde e triagem.
+        institution_id:
+          type: string
+          format: uuid
+        required_skill:
+          type: string
+          example: saude
+        volunteers_needed:
+          type: integer
+          minimum: 1
+          example: 4
+        urgency_level:
+          $ref: '#/components/schemas/UrgencyLevel'
+        location_city:
+          type: string
+          example: Canoas
+        location_state:
+          type: string
+          example: RS
+    NeedResponse:
+      type: object
+      required: [id, title, description, required_skill, volunteers_needed, urgency_level, location_city, location_state, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        description:
+          type: string
+        institution_id:
+          type: string
+          format: uuid
+        required_skill:
+          type: string
+        volunteers_needed:
+          type: integer
+        urgency_level:
+          $ref: '#/components/schemas/UrgencyLevel'
+        location_city:
+          type: string
+        location_state:
+          type: string
+        status:
+          $ref: '#/components/schemas/NeedStatus'
+        created_at:
+          type: string
+          format: date-time
+    UrgencyClassifyRequest:
+      type: object
+      required: [description]
+      properties:
+        description:
+          type: string
+          example: Há famílias ilhadas precisando de resgate e atendimento médico imediato.
+    UrgencyClassifyResponse:
+      type: object
+      required: [urgency_level, confidence, justification]
+      properties:
+        urgency_level:
+          $ref: '#/components/schemas/UrgencyLevel'
+        confidence:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+          example: 0.91
+        justification:
+          type: string
+          example: Menção a famílias ilhadas e atendimento médico imediato indica risco alto à vida.
+    MatchedVolunteer:
+      type: object
+      required: [volunteer_id, full_name, city, state, skills, score, reason]
+      properties:
+        volunteer_id:
+          type: string
+          format: uuid
+        full_name:
+          type: string
+        city:
+          type: string
+        state:
+          type: string
+        skills:
+          type: array
+          items:
+            type: string
+        availability:
+          $ref: '#/components/schemas/Availability'
+        score:
+          type: number
+          format: float
+          minimum: 0
+          maximum: 1
+        reason:
+          type: string
+          example: Mesma cidade, habilidade de saúde compatível e disponibilidade integral.
+    MatchResponse:
+      type: object
+      required: [need_id, matches]
+      properties:
+        need_id:
+          type: string
+          format: uuid
+        matches:
+          type: array
+          items:
+            $ref: '#/components/schemas/MatchedVolunteer'
+        summary:
+          type: string
+          example: Encontrados 3 voluntários compatíveis em Canoas/RS.
+    RecommendationResponse:
+      type: object
+      required: [volunteer_id, recommendations]
+      properties:
+        volunteer_id:
+          type: string
+          format: uuid
+        recommendations:
+          type: array
+          items:
+            type: object
+            required: [need_id, title, urgency_level, reason]
+            properties:
+              need_id:
+                type: string
+                format: uuid
+              title:
+                type: string
+              urgency_level:
+                $ref: '#/components/schemas/UrgencyLevel'
+              reason:
+                type: string
+    NotificationCreateRequest:
+      type: object
+      required: [recipient_type, recipient_id, title, message]
+      properties:
+        recipient_type:
+          type: string
+          enum: [volunteer, institution, donor]
+        recipient_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+          example: Necessidade urgente compatível com seu perfil
+        message:
+          type: string
+          example: Maria, a Defesa Civil precisa de apoio de saúde em Canoas. Você pode ajudar hoje?
+        channel:
+          type: string
+          enum: [in_app, whatsapp_mock, email_mock]
+          default: in_app
+        related_need_id:
+          type: string
+          format: uuid
+          nullable: true
+    NotificationResponse:
+      type: object
+      required: [id, recipient_type, recipient_id, title, message, channel, status, created_at]
+      properties:
+        id:
+          type: string
+          format: uuid
+        recipient_type:
+          type: string
+        recipient_id:
+          type: string
+          format: uuid
+        title:
+          type: string
+        message:
+          type: string
+        channel:
+          type: string
+        status:
+          type: string
+          enum: [created, sent_mock]
+        created_at:
+          type: string
+          format: date-time
+    RadarMockAlertRequest:
+      type: object
+      required: [source, original_text, location_city, location_state]
+      properties:
+        source:
+          type: string
+          enum: [inmet_mock, cemaden_mock, gdacs_mock, x_twitter_mock]
+          example: cemaden_mock
+        original_text:
+          type: string
+          example: Alerta de alagamento severo em Canoas com famílias desalojadas e necessidade de abrigo.
+        location_city:
+          type: string
+          example: Canoas
+        location_state:
+          type: string
+          example: RS
+        force_create_need:
+          type: boolean
+          default: true
+    RadarMockAlertResponse:
+      type: object
+      required: [external_alert_id, classified_urgency, validated_need, explanation]
+      properties:
+        external_alert_id:
+          type: string
+          format: uuid
+        classified_urgency:
+          $ref: '#/components/schemas/UrgencyLevel'
+        validated_need:
+          type: boolean
+        created_need_id:
+          type: string
+          format: uuid
+          nullable: true
+        explanation:
+          type: string
+          example: Alerta mockado indica enchente com desalojados; convertido em necessidade de apoio em abrigo.
+    DashboardSummaryResponse:
+      type: object
+      required: [volunteers_total, institutions_total, open_needs_total, critical_needs_total, matches_total, bottlenecks]
+      properties:
+        volunteers_total:
+          type: integer
+        institutions_total:
+          type: integer
+        open_needs_total:
+          type: integer
+        critical_needs_total:
+          type: integer
+        matches_total:
+          type: integer
+        bottlenecks:
+          type: array
+          items:
+            type: object
+            required: [need_id, title, urgency_level, reason]
+            properties:
+              need_id:
+                type: string
+                format: uuid
+              title:
+                type: string
+              urgency_level:
+                $ref: '#/components/schemas/UrgencyLevel'
+              reason:
+                type: string
