@@ -137,15 +137,19 @@ O processo correto é:
 **Região:** Dallas (us-south) — conforme guia.
 
 ### Conta pessoal do Eduardo (atual no navegador):
-- Já tem 5+ recursos de IA/Aprendizado de máquina provisionados
-- A página de criar watsonx Orchestrate está aberta com Trial selecionado
-- **Mas não devemos provisionar aqui** — é a conta pessoal, não a do hackathon
+### Status atual (2026-04-27 01:50):
+- ✅ **watsonx Orchestrate provisionado** em Dallas (us-south), Trial, 28 dias
+- ✅ **Agente VoluntAI Orchestrator criado** (ID: 649ca037-2650-4391-ab18-041752271aff)
+  - Estilo: ReAct
+  - Guideline: Triagem e Roteamento
+  - Welcome message configurada
+- ✅ **GitHub repo:** github.com/duribeiro/voluntai-hackathon-ibm
+- 🔄 **Próximo:** Criar agentes especialistas (Match, Cadastro, Notificação) e adicionar tools
 
-### O que Eduardo precisa fazer:
-1. Verificar email (ribeiro_eduardo01@acad.unasp.edu.br) por convite do "AI Experiential Learning Lab"
-2. Se não recebeu, entrar em contato com organizadores do hackathon
-3. Aceitar convite, trocar para conta do Learning Lab
-4. Acessar watsonx Orchestrate pela conta do hackathon
+### Credenciais
+- API Key: ver `ibm-credentials.md` (não versionar)
+- Instance URL: https://api.us-south.watson-orchestrate.cloud.ibm.com/instances/b04d0f86-80ae-4244-9b55-86fd655e1d3e
+- Launch: https://us-south.watson-orchestrate.cloud.ibm.com/chat
 
 ## 7. Próximos passos (checklist)
 
