@@ -9,6 +9,11 @@ Esta pasta centraliza o video curto de demonstracao da PoC VoluntAI para a submi
 - Dashboard operacional: https://voluntai-hackathon-ibm.vercel.app/api/dashboard/summary
 - Repositorio: https://github.com/duribeiro/voluntai-hackathon-ibm
 
+## Video final
+
+- Arquivo: [`2026-04-27 21-08-59.mp4`](./2026-04-27%2021-08-59.mp4)
+- Roteiro de gravacao: [`roteiro-gravacao.md`](./roteiro-gravacao.md)
+
 ## Roteiro do video
 
 O video demonstra o problema de coordenacao de voluntarios em crises, a abordagem com IBM watsonx Orchestrate e os principais fluxos da PoC: cadastro, classificacao de urgencia, matching, notificacao mockada e dashboard operacional.
